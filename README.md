@@ -1,16 +1,79 @@
-# React + Vite
+# Nimble Gravity — Candidate Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portal de postulación para candidatos. Permite ingresar con tu email, ver las posiciones abiertas y enviar tu repositorio de GitHub a la posición que te interese.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** + **Vite 7**
+- **Framer Motion** para animaciones
+- API REST propia en Azure (`botfilter-h5ddh6dye8exb7ha.centralus-01.azurewebsites.net`)
 
-## React Compiler
+## Requisitos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18 o superior
+- npm 9 o superior
 
-## Expanding the ESLint configuration
+## Instalación y uso
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/nimble-challenge.git
+cd nimble-challenge
+
+# Instalar dependencias
+npm install
+
+# Iniciar en modo desarrollo
+npm run dev
+```
+
+La app queda disponible en `http://localhost:5173`.
+
+```bash
+# Build de producción
+npm run build
+
+# Preview del build
+npm run preview
+```
+
+## Flujo de la aplicación
+
+1. **Ingreso** — El usuario escribe su email. La app consulta `GET /api/candidate/get-by-email` y recupera sus datos (`uuid`, `candidateId`, nombre).
+
+2. **Listado de posiciones** — Una vez autenticado, se obtiene `GET /api/jobs/get-list` y se muestran todas las posiciones abiertas.
+
+3. **Postulación** — Cada posición tiene un input para la URL del repositorio de GitHub y un botón Submit. Al presionarlo se ejecuta `POST /api/candidate/apply-to-job` con el payload `{ uuid, jobId, candidateId, repoUrl }`.
+
+## Estructura del proyecto
+
+```
+src/
+├── api/
+│   ├── client.js          # Fetch wrapper con manejo de errores HTTP y de red
+│   ├── candidateService.js
+│   └── jobsService.js
+├── components/
+│   ├── CandidateSetup/    # Formulario de ingreso por email
+│   ├── CandidateCard/     # Barra con los datos del candidato activo
+│   ├── JobList/           # Lista de posiciones con skeleton loader
+│   ├── JobItem/           # Card individual: input + submit por posición
+│   └── ui/
+│       ├── Alert.jsx      # Mensajes de error, éxito e info
+│       └── Spinner.jsx
+├── hooks/
+│   ├── useCandidate.js    # Fetch y estado del candidato
+│   ├── useJobs.js         # Fetch de posiciones al montar
+│   └── useApply.js        # Validación y envío de postulación
+├── utils/
+│   └── validators.js      # Validación de email y URL de GitHub
+└── constants/
+    └── api.js             # BASE_URL y endpoints
+```
+
+## Manejo de errores
+
+- **Validación client-side** antes de cualquier llamada a la API (email y URL de GitHub).
+- **Errores HTTP** — `client.js` lee el body de la respuesta y muestra el mensaje descriptivo que devuelve la API.
+- **Errores de red** — Si `fetch` falla por conectividad, se muestra un mensaje claro en lugar de una excepción no controlada.
+- Cada `useEffect` con fetch usa una flag `cancelled` para evitar actualizaciones de estado en componentes desmontados.
