@@ -11,7 +11,7 @@ export function JobItem({ job, candidate }) {
   function handleSubmit(e) {
     e.preventDefault();
     submitApplication({
-      uuid: candidate.uuid,
+      applicationId: candidate.uuid,
       jobId: job.id,
       candidateId: candidate.candidateId,
       repoUrl,
