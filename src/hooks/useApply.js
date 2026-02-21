@@ -13,7 +13,7 @@ export function useApply() {
   const [state, setState] = useState(INITIAL_STATE);
 
   const submitApplication = useCallback(
-    async ({ applicationId, jobId, candidateId, repoUrl }) => {
+    async ({ uuid, applicationId, jobId, candidateId, repoUrl }) => {
       const { valid, error: validationError } = validateGithubUrl(repoUrl);
       if (!valid) {
         setState((prev) => ({ ...prev, error: validationError }));
@@ -24,6 +24,7 @@ export function useApply() {
 
       try {
         await applyToJob({
+          uuid,
           applicationId,
           jobId,
           candidateId,

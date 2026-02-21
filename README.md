@@ -39,11 +39,11 @@ npm run preview
 
 ## Flujo de la aplicación
 
-1. **Ingreso** — El usuario escribe su email. La app consulta `GET /api/candidate/get-by-email` y recupera sus datos (`uuid`, `candidateId`, nombre).
+1. **Ingreso** — El usuario escribe su email. La app consulta `GET /api/candidate/get-by-email` y recupera sus datos (`uuid`, `candidateId`, `applicationId`, nombre).
 
 2. **Listado de posiciones** — Una vez autenticado, se obtiene `GET /api/jobs/get-list` y se muestran todas las posiciones abiertas.
 
-3. **Postulación** — Cada posición tiene un input para la URL del repositorio de GitHub y un botón Submit. Al presionarlo se ejecuta `POST /api/candidate/apply-to-job` con el payload `{ uuid, jobId, candidateId, repoUrl }`.
+3. **Postulación** — Cada posición tiene un input para la URL del repositorio de GitHub y un botón Submit. Al presionarlo se ejecuta `POST /api/candidate/apply-to-job` con el payload `{ uuid, applicationId, jobId, candidateId, repoUrl }`.
 
 ## Estructura del proyecto
 
